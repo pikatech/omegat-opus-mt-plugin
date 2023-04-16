@@ -24,15 +24,8 @@ You can get a plugin jar file from zip/tgz distribution file.
 OmegaT plugin should be placed in `$HOME/.omegat/plugins` or `C:\Program Files\OmegaT\plugins`
 depending on your operating system.
 
-To run the test MT server, you have to install Node.js, then run the following commands :
-
-```
-$ npm install
-$ npm start
-
-  [...]
-  Fake TM Server listening on port 8877!
-```
+The plugin is meant to be used in conjunction with a REST service running an
+Opus-MT translation model. A matching service can be found under <link to OPUS-MT project>.
 
 ## License
 

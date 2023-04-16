@@ -48,7 +48,7 @@ public class OpusMT  extends BaseTranslate {
     protected static final String ALLOW_OPUSMT = "allow_opusmt";
     
     protected static final String PARAM_URL = "opusmt.url";
-    protected static final String PARAM_URL_DEFAULT = "http://localhost:8877/translate";
+    protected static final String PARAM_URL_DEFAULT = "http://localhost:8000/translate";
     protected static final String PARAM_NAME = "opusmt.name";
     protected static final String PARAM_NAME_DEFAULT = "Opus MT";
     protected static final String PARAM_SOURCE = "opusmt.query.source";
