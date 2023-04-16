@@ -22,7 +22,6 @@ import org.omegat.core.events.IApplicationEventListener;
 import org.omegat.core.machinetranslators.BaseTranslate;
 import org.omegat.core.machinetranslators.MachineTranslators;
 import org.omegat.gui.exttrans.MTConfigDialog;
-import org.omegat.util.JsonParser;
 import org.omegat.util.Language;
 import org.omegat.util.Log;
 import org.omegat.util.OStrings;
