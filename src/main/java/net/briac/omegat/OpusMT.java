@@ -41,11 +41,10 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathFactory;
 
-
-public class OpusMT  extends BaseTranslate {
+public class OpusMT extends BaseTranslate {
 
     protected static final String ALLOW_OPUSMT = "allow_opusmt";
-    
+
     protected static final String PARAM_URL = "opusmt.url";
     protected static final String PARAM_URL_DEFAULT = "http://localhost:8000/translate";
     protected static final String PARAM_NAME = "opusmt.name";
@@ -80,7 +79,6 @@ public class OpusMT  extends BaseTranslate {
         /* empty */
     }
 
-    
     @Override
     protected String getPreferenceName() {
         return ALLOW_OPUSMT;
@@ -96,19 +94,24 @@ public class OpusMT  extends BaseTranslate {
         Map<String, String> params = new TreeMap<String, String>();
 
         params.put(Preferences.getPreferenceDefault(PARAM_TEXT, PARAM_TEXT_DEFAULT), text);
-        params.put(Preferences.getPreferenceDefault(PARAM_SOURCE, PARAM_SOURCE_DEFAULT), sLang.getLanguage());
-        params.put(Preferences.getPreferenceDefault(PARAM_TARGET, PARAM_TARGET_DEFAULT), tLang.getLanguage());
+        params.put(Preferences.getPreferenceDefault(PARAM_SOURCE, PARAM_SOURCE_DEFAULT),
+                sLang.getLanguage());
+        params.put(Preferences.getPreferenceDefault(PARAM_TARGET, PARAM_TARGET_DEFAULT),
+                tLang.getLanguage());
 
         Map<String, String> headers = new TreeMap<String, String>();
 
         String v;
         try {
-            v = WikiGet.get(Preferences.getPreferenceDefault(PARAM_URL, PARAM_URL_DEFAULT), params, headers, "UTF-8");
+            v = WikiGet.get(Preferences.getPreferenceDefault(PARAM_URL, PARAM_URL_DEFAULT), params,
+                    headers, "UTF-8");
         } catch (IOException e) {
             return e.getLocalizedMessage();
         }
 
-        String tr = Preferences.getPreferenceDefault(PARAM_FORMAT, "json").equals("json") ? getJsonResults(v) : getXmlResults(v);
+        String tr = "json".equals(Preferences.getPreferenceDefault(PARAM_FORMAT, "json"))
+                ? getJsonResults(v)
+                : getXmlResults(v);
 
         if (tr == null) {
             return "";
@@ -118,24 +121,30 @@ public class OpusMT  extends BaseTranslate {
         return tr;
     }
 
-    private static final Invocable jsonParser;
+    private static final Invocable JSON_PARSER;
     static {
         ScriptEngine jsEngine = null;
         try {
             jsEngine = new ScriptEngineManager().getEngineByName("javascript");
-            jsEngine.eval(new InputStreamReader(OpusMT.class.getResourceAsStream("/net/briac/omegat/path.js")));
-            jsEngine.eval("function parse(json,expr) { return Java.asJSONCompatible(jsonPath(JSON.parse(json),expr)[0]) }");
+            jsEngine.eval(new InputStreamReader(
+                    OpusMT.class.getResourceAsStream("/net/briac/omegat/path.js")));
+            jsEngine.eval(
+                    "function parse(json,expr) { return Java.asJSONCompatible(jsonPath(JSON.parse(json),expr)[0]) }");
         } catch (ScriptException e) {
-            Logger.getLogger(OpusMT.class.getName()).log(Level.SEVERE, "Unable to initialize JSON parser", e);
+            Logger.getLogger(OpusMT.class.getName()).log(Level.SEVERE,
+                    "Unable to initialize JSON parser", e);
         } finally {
-            jsonParser = (Invocable) jsEngine;
+            JSON_PARSER = (Invocable) jsEngine;
         }
     }
 
     @SuppressWarnings("unchecked")
-    protected String getJsonResults(String json) {
+    protected String getJsonResults(final String json) {
         try {
-            return jsonParser.invokeFunction("parse", json, Preferences.getPreferenceDefault(PARAM_EXPR, PARAM_EXPR_DEFAULT)).toString();
+            return JSON_PARSER
+                    .invokeFunction("parse", json,
+                            Preferences.getPreferenceDefault(PARAM_EXPR, PARAM_EXPR_DEFAULT))
+                    .toString();
         } catch (Exception e) {
             Log.logErrorRB(e, "MT_JSON_ERROR");
             return OStrings.getString("MT_JSON_ERROR");
@@ -143,7 +152,7 @@ public class OpusMT  extends BaseTranslate {
     }
 
     @SuppressWarnings("unchecked")
-    protected String getXmlResults(String xml) {
+    protected String getXmlResults(final String xml) {
         try {
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             factory.setNamespaceAware(true);
@@ -151,7 +160,8 @@ public class OpusMT  extends BaseTranslate {
             Document doc = builder.parse(new InputSource(new StringReader(xml)));
             XPathFactory xpathfactory = XPathFactory.newInstance();
             XPath xpath = xpathfactory.newXPath();
-            XPathExpression expr = xpath.compile(Preferences.getPreferenceDefault(PARAM_EXPR, PARAM_EXPR_DEFAULT));
+            XPathExpression expr = xpath
+                    .compile(Preferences.getPreferenceDefault(PARAM_EXPR, PARAM_EXPR_DEFAULT));
             return expr.evaluate(doc, XPathConstants.STRING).toString();
         } catch (Exception e) {
             Log.logErrorRB(e, "MT_JSON_ERROR");
@@ -174,48 +184,50 @@ public class OpusMT  extends BaseTranslate {
         GridBagConstraints gridBagConstraints = null;
 
         int uiRow = 0;
-        
+
         // MT Name
         JLabel nameLabel = new JLabel("Name:");
-        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = uiRow;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = GridBagConstraints.WEST;
         gridBagConstraints.insets = new java.awt.Insets(0, 0, 10, 5);
         mtPanel.add(nameLabel, gridBagConstraints);
 
-        JTextField nameField = new JTextField(Preferences.getPreferenceDefault(PARAM_NAME, PARAM_URL_DEFAULT));
-        gridBagConstraints = new java.awt.GridBagConstraints();
+        JTextField nameField = new JTextField(
+                Preferences.getPreferenceDefault(PARAM_NAME, PARAM_URL_DEFAULT));
+        gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = uiRow;
-        gridBagConstraints.gridwidth = java.awt.GridBagConstraints.REMAINDER;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.gridwidth = GridBagConstraints.REMAINDER;
+        gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
         gridBagConstraints.ipadx = 50;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.anchor = GridBagConstraints.WEST;
         gridBagConstraints.insets = new java.awt.Insets(0, 0, 10, 0);
         nameLabel.setLabelFor(nameField);
         mtPanel.add(nameField, gridBagConstraints);
         uiRow++;
-        
+
         // MT URL
         JLabel urlLabel = new JLabel("URL:");
-        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = uiRow;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = GridBagConstraints.WEST;
         gridBagConstraints.insets = new java.awt.Insets(0, 0, 10, 5);
         mtPanel.add(urlLabel, gridBagConstraints);
 
-        JTextField urlField = new JTextField(Preferences.getPreferenceDefault(PARAM_URL, PARAM_URL_DEFAULT));
-        gridBagConstraints = new java.awt.GridBagConstraints();
+        JTextField urlField = new JTextField(
+                Preferences.getPreferenceDefault(PARAM_URL, PARAM_URL_DEFAULT));
+        gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = uiRow;
-        gridBagConstraints.gridwidth = java.awt.GridBagConstraints.REMAINDER;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.gridwidth = GridBagConstraints.REMAINDER;
+        gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
         gridBagConstraints.ipadx = 50;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.anchor = GridBagConstraints.WEST;
         gridBagConstraints.insets = new java.awt.Insets(0, 0, 10, 0);
         urlLabel.setLabelFor(urlField);
         mtPanel.add(urlField, gridBagConstraints);
@@ -223,22 +235,23 @@ public class OpusMT  extends BaseTranslate {
 
         // Source Parameter
         JLabel paramSourceLabel = new JLabel("Source Parameter:");
-        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = uiRow;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = GridBagConstraints.WEST;
         gridBagConstraints.insets = new java.awt.Insets(0, 0, 10, 5);
         mtPanel.add(paramSourceLabel, gridBagConstraints);
 
-        JTextField paramSourceField = new JTextField(Preferences.getPreferenceDefault(PARAM_SOURCE, PARAM_SOURCE_DEFAULT));
-        gridBagConstraints = new java.awt.GridBagConstraints();
+        JTextField paramSourceField = new JTextField(
+                Preferences.getPreferenceDefault(PARAM_SOURCE, PARAM_SOURCE_DEFAULT));
+        gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = uiRow;
-        gridBagConstraints.gridwidth = java.awt.GridBagConstraints.REMAINDER;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.gridwidth = GridBagConstraints.REMAINDER;
+        gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
         gridBagConstraints.ipadx = 50;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.anchor = GridBagConstraints.WEST;
         gridBagConstraints.insets = new java.awt.Insets(0, 0, 10, 0);
         paramSourceLabel.setLabelFor(paramSourceField);
         mtPanel.add(paramSourceField, gridBagConstraints);
@@ -246,22 +259,23 @@ public class OpusMT  extends BaseTranslate {
 
         // Target Parameter
         JLabel paramTargetLabel = new JLabel("Target Parameter:");
-        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = uiRow;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = GridBagConstraints.WEST;
         gridBagConstraints.insets = new java.awt.Insets(0, 0, 10, 5);
         mtPanel.add(paramTargetLabel, gridBagConstraints);
 
-        JTextField paramTargetField = new JTextField(Preferences.getPreferenceDefault(PARAM_TARGET, PARAM_TARGET_DEFAULT));
-        gridBagConstraints = new java.awt.GridBagConstraints();
+        JTextField paramTargetField = new JTextField(
+                Preferences.getPreferenceDefault(PARAM_TARGET, PARAM_TARGET_DEFAULT));
+        gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = uiRow;
-        gridBagConstraints.gridwidth = java.awt.GridBagConstraints.REMAINDER;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.gridwidth = GridBagConstraints.REMAINDER;
+        gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
         gridBagConstraints.ipadx = 50;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.anchor = GridBagConstraints.WEST;
         gridBagConstraints.insets = new java.awt.Insets(0, 0, 10, 0);
         paramSourceLabel.setLabelFor(paramSourceField);
         mtPanel.add(paramTargetField, gridBagConstraints);
@@ -269,78 +283,82 @@ public class OpusMT  extends BaseTranslate {
 
         // Text Parameter
         JLabel paramTextLabel = new JLabel("Text Parameter:");
-        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = uiRow;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = GridBagConstraints.WEST;
         gridBagConstraints.insets = new java.awt.Insets(0, 0, 10, 5);
         mtPanel.add(paramTextLabel, gridBagConstraints);
 
-        JTextField paramTextField = new JTextField(Preferences.getPreferenceDefault(PARAM_TEXT, PARAM_TEXT_DEFAULT));
-        gridBagConstraints = new java.awt.GridBagConstraints();
+        JTextField paramTextField = new JTextField(
+                Preferences.getPreferenceDefault(PARAM_TEXT, PARAM_TEXT_DEFAULT));
+        gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = uiRow;
-        gridBagConstraints.gridwidth = java.awt.GridBagConstraints.REMAINDER;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.gridwidth = GridBagConstraints.REMAINDER;
+        gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
         gridBagConstraints.ipadx = 50;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.anchor = GridBagConstraints.WEST;
         gridBagConstraints.insets = new java.awt.Insets(0, 0, 10, 0);
         paramSourceLabel.setLabelFor(paramSourceField);
         mtPanel.add(paramTextField, gridBagConstraints);
         uiRow++;
-        
+
         // Format parameter
         JLabel resultFormatLabel = new JLabel("Result format:");
-        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = uiRow;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = GridBagConstraints.WEST;
         gridBagConstraints.insets = new java.awt.Insets(0, 0, 10, 5);
         mtPanel.add(resultFormatLabel, gridBagConstraints);
 
         JPanel pFormats = new JPanel();
         JRadioButton jsonBox = new JRadioButton("JSON");
-        jsonBox.setSelected(Preferences.getPreferenceDefault(PARAM_FORMAT, "json").equals("json"));
+        jsonBox.setSelected("json".equals(Preferences.getPreferenceDefault(PARAM_FORMAT, "json")));
         pFormats.add(jsonBox);
         JRadioButton xmlBox = new JRadioButton("XML");
-        xmlBox.setSelected(Preferences.getPreferenceDefault(PARAM_FORMAT, "json").equals("xml"));
+        xmlBox.setSelected("xml".equals(Preferences.getPreferenceDefault(PARAM_FORMAT, "json")));
         pFormats.add(xmlBox);
         ButtonGroup gFormats = new ButtonGroup();
         gFormats.add(jsonBox);
         gFormats.add(xmlBox);
-        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = uiRow;
-        gridBagConstraints.gridwidth = java.awt.GridBagConstraints.REMAINDER;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.gridwidth = GridBagConstraints.REMAINDER;
+        gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
         gridBagConstraints.ipadx = 50;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.anchor = GridBagConstraints.WEST;
         gridBagConstraints.insets = new java.awt.Insets(0, 0, 10, 0);
         paramSourceLabel.setLabelFor(paramSourceField);
         mtPanel.add(pFormats, gridBagConstraints);
         uiRow++;
 
         // Text Parameter
-        JLabel exprLabel = new JLabel(jsonBox.isSelected() ? "JSONPath expression:" : "XPath expression:");
-        gridBagConstraints = new java.awt.GridBagConstraints();
+        JLabel exprLabel = new JLabel(
+                jsonBox.isSelected() ? "JSONPath expression:" : "XPath expression:");
+        gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = uiRow;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = GridBagConstraints.WEST;
         gridBagConstraints.insets = new java.awt.Insets(0, 0, 10, 5);
         mtPanel.add(exprLabel, gridBagConstraints);
-        jsonBox.addChangeListener(ev -> exprLabel.setText(jsonBox.isSelected() ? "JSONPath expression:" : "XPath expression:"));
+        jsonBox.addChangeListener(ev -> exprLabel
+                .setText(jsonBox.isSelected() ? "JSONPath expression:" : "XPath expression:"));
 
-        JTextField exprField = new JTextField(Preferences.getPreferenceDefault(PARAM_EXPR, PARAM_EXPR_DEFAULT));
-        gridBagConstraints = new java.awt.GridBagConstraints();
+        JTextField exprField = new JTextField(
+                Preferences.getPreferenceDefault(PARAM_EXPR, PARAM_EXPR_DEFAULT));
+        gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = uiRow;
-        gridBagConstraints.gridwidth = java.awt.GridBagConstraints.REMAINDER;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.gridwidth = GridBagConstraints.REMAINDER;
+        gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
         gridBagConstraints.ipadx = 50;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.anchor = GridBagConstraints.WEST;
         gridBagConstraints.insets = new java.awt.Insets(0, 0, 10, 0);
         paramSourceLabel.setLabelFor(paramSourceField);
         mtPanel.add(exprField, gridBagConstraints);
