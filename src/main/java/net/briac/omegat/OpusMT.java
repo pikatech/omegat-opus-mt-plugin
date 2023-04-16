@@ -43,23 +43,23 @@ import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathFactory;
 
 
-public class FakeMT  extends BaseTranslate {
+public class OpusMT  extends BaseTranslate {
 
-    protected static final String ALLOW_FAKEMT = "allow_fakemt";
+    protected static final String ALLOW_OPUSMT = "allow_opusmt";
     
-    protected static final String PARAM_URL = "fakemt.url";
+    protected static final String PARAM_URL = "opusmt.url";
     protected static final String PARAM_URL_DEFAULT = "http://localhost:8877/translate";
-    protected static final String PARAM_NAME = "fakemt.name";
-    protected static final String PARAM_NAME_DEFAULT = "Fake MT";
-    protected static final String PARAM_SOURCE = "fakemt.query.source";
+    protected static final String PARAM_NAME = "opusmt.name";
+    protected static final String PARAM_NAME_DEFAULT = "Opus MT";
+    protected static final String PARAM_SOURCE = "opusmt.query.source";
     protected static final String PARAM_SOURCE_DEFAULT = "source";
-    protected static final String PARAM_TARGET = "fakemt.query.target";
+    protected static final String PARAM_TARGET = "opusmt.query.target";
     protected static final String PARAM_TARGET_DEFAULT = "target";
-    protected static final String PARAM_TEXT = "fakemt.query.text";
+    protected static final String PARAM_TEXT = "opusmt.query.text";
     protected static final String PARAM_TEXT_DEFAULT = "text";
-    protected static final String PARAM_FORMAT = "fakemt.result.format";
+    protected static final String PARAM_FORMAT = "opusmt.result.format";
     protected static final String PARAM_FORMAT_DEFAULT = "json";
-    protected static final String PARAM_EXPR = "fakemt.result.expr";
+    protected static final String PARAM_EXPR = "opusmt.result.expr";
     protected static final String PARAM_EXPR_DEFAULT = "$.translation";
 
     // Plugin setup
@@ -67,7 +67,7 @@ public class FakeMT  extends BaseTranslate {
         CoreEvents.registerApplicationEventListener(new IApplicationEventListener() {
             @Override
             public void onApplicationStartup() {
-                MachineTranslators.add(new FakeMT());
+                MachineTranslators.add(new OpusMT());
             }
 
             @Override
@@ -84,7 +84,7 @@ public class FakeMT  extends BaseTranslate {
     
     @Override
     protected String getPreferenceName() {
-        return ALLOW_FAKEMT;
+        return ALLOW_OPUSMT;
     }
 
     @Override

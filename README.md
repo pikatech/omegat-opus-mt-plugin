@@ -1,4 +1,4 @@
-# OmegaT FakeMT plugin
+# OmegaT Opus-MT plugin
 
 This plugin let you add a custom remote Machine Translator. You can configure four parameters in the MT configuration window.
 
