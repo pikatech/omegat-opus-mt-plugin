@@ -1,6 +1,5 @@
 plugins {
     id 'java'
-    id 'findbugs'
     id 'checkstyle'
     id 'distribution'
     id 'maven'
@@ -55,28 +54,13 @@ jar {
 
 /* Checkstyle */
 checkstyle {
-    config = resources.text.fromFile("${rootProject.projectDir}/config/checkstyle/checkstyle.xml")
+    config = resources.text.fromFile("config/checkstyle/checkstyle.xml")
     ignoreFailures = true
-    toolVersion = '7.1'
+    toolVersion = '7.8.2'
     sourceSets = [project.sourceSets.main]
 }
 tasks.checkstyleMain.setGroup('Verification')
 tasks.remove(tasks['checkstyleTest'])
-
-/* FindBugs */
-findbugs {
-    ignoreFailures = true
-    sourceSets = [project.sourceSets.main]
-}
-
-tasks.withType(FindBugs) {
-    setGroup('Verification')
-    reports {
-        xml.enabled = false
-        html.enabled = true
-    }
-}
-tasks.remove(tasks['findbugsTest'])
 
 artifacts {
     archives jar
