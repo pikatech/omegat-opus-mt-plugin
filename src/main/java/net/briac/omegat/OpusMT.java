@@ -124,10 +124,10 @@ public class OpusMT  extends BaseTranslate {
         ScriptEngine jsEngine = null;
         try {
             jsEngine = new ScriptEngineManager().getEngineByName("javascript");
-            jsEngine.eval(new InputStreamReader(FakeMT.class.getResourceAsStream("/net/briac/omegat/path.js")));
+            jsEngine.eval(new InputStreamReader(OpusMT.class.getResourceAsStream("/net/briac/omegat/path.js")));
             jsEngine.eval("function parse(json,expr) { return Java.asJSONCompatible(jsonPath(JSON.parse(json),expr)[0]) }");
         } catch (ScriptException e) {
-            Logger.getLogger(FakeMT.class.getName()).log(Level.SEVERE, "Unable to initialize JSON parser", e);
+            Logger.getLogger(OpusMT.class.getName()).log(Level.SEVERE, "Unable to initialize JSON parser", e);
         } finally {
             jsonParser = (Invocable) jsEngine;
         }
