@@ -84,12 +84,3 @@ distributions {
         }
     }
 }
-
-
-task installPlugin(type: Copy) {
-        from 'build/install/omegat-plugin-fake-mt/plugin'
-        into omegatPluginDir
-        include('*.jar')
-}
-
-installPlugin.dependsOn installDist
