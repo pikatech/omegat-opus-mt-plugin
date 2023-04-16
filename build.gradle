@@ -9,10 +9,7 @@ plugins {
 }
 
 repositories {
-    maven {
-        url "https://dl.bintray.com/omegat-org/maven"
-    }
-    jcenter()
+    mavenCentral()
 }
 
 def compileDependencies = [
