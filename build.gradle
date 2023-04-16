@@ -56,7 +56,7 @@ jar {
 checkstyle {
     config = resources.text.fromFile("config/checkstyle/checkstyle.xml")
     ignoreFailures = true
-    toolVersion = '8.45.1'
+    toolVersion = '9.3'
     sourceSets = [project.sourceSets.main]
 }
 tasks.checkstyleMain.setGroup('Verification')
