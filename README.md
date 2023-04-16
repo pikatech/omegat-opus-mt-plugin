@@ -1,6 +1,9 @@
 # OmegaT Opus-MT plugin
 
-This plugin let you add a custom remote Machine Translator. You can configure four parameters in the MT configuration window.
+This plugin lets you add a custom remote Machine Translator. The plugin is meant to be used in conjunction with a REST service running an
+Opus-MT translation model. A matching service can be found under https://github.com/pikatech/opus-mt-rest-service.
+
+You can configure four parameters in the MT configuration window.
 
 * __URL__: the URL to connect to
 * __source__: The name of the source parameter that will take the source language.
@@ -21,11 +24,8 @@ There are currently several limitations, for this plugin:
 ## Installation
 
 You can get a plugin jar file from zip/tgz distribution file.
-OmegaT plugin should be placed in `$HOME/.omegat/plugins` or `C:\Program Files\OmegaT\plugins`
+The OmegaT plugin should be placed in `$HOME/.omegat/plugins` or `C:\Program Files\OmegaT\plugins`
 depending on your operating system.
-
-The plugin is meant to be used in conjunction with a REST service running an
-Opus-MT translation model. A matching service can be found under <link to OPUS-MT project>.
 
 ## License
 
